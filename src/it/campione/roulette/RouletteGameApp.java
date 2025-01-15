@@ -24,6 +24,28 @@ import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+/**
+ * Castle Method: {
+ * You bet 0.50 EUR on 0.
+ * You bet 5 EUR on the "1st 12" sector.
+ * You bet 5 EUR on the "2nd 12" sector.
+ * You bet 0.50 EUR on the "3rd 12" sector straddling the two pairs at the
+ * bottom "25 and 28" and "31 and 34" (0.50 EUR and 0.50 EUR respectively). In
+ * total, therefore, 11.50 EUR is staked.
+ * }
+ * 
+ * The "Opposite Color" method takes over in the event of a "loss" with the
+ * "Castle" method, i.e. when the gain with the "Castle" method decreases the
+ * total gain despite the victory. "Opposite Color" mode: {
+ * You bet 8.50 EUR on the color opposite to that of the number that was drawn
+ * just before (if a red number belonging to the third sector "3rd 12" had just
+ * been drawn, you would now bet on the opposite color, i.e. the color black).
+ * Both in case of victory and defeat, the "Castle" method is applied again and
+ * so on.
+ * }
+ * 
+ * For more details see the video https://www.youtube.com/watch?v=VPmbUqGtrOY
+ */
 public class RouletteGameApp extends Application {
 
     private WebView outputWebView;
@@ -162,7 +184,8 @@ public class RouletteGameApp extends Application {
         String maxProfitLine = "";
         int maxProfitIndex = -1;
 
-        output.append("<html><body style='font-family: Courier New; font-size: 12px;'>");
+        output.append(
+                "<html><head><meta charset='UTF-8'></head><body style='font-family: Courier New; font-size: 12px;'>");
 
         // Variabile per tenere traccia della strategia attuale
         String currentStrategy = "Castello";
@@ -245,6 +268,7 @@ public class RouletteGameApp extends Application {
                 + maxProfitLine + "</span>";
         String finalOutput = output.toString().replace(maxProfitLine, highlightedLine);
 
+        // Carica il contenuto con codifica UTF-8
         outputWebView.getEngine().loadContent(finalOutput);
         statsTextArea.setText(stats.toString());
 
@@ -256,18 +280,16 @@ public class RouletteGameApp extends Application {
     }
 
     private double calculateBetResult(int number) {
-        // Scommesse principali:
-        // 0.50€ su 0
-        // 0.50€ su 25-28 e "3rd 12"
-        // 0.50€ su 31-34 e "3rd 12"
-        // 5€ su "1st 12"
-        // 5€ su "2nd 12"
-
         double totalWin = 0;
 
         if (number == 0) {
             // Vincita su 0 (payout 35:1)
             totalWin += 0.50 * 35; // 17.50€
+            // Sottrai le perdite delle altre scommesse
+            totalWin -= 5; // Scommessa su "1st 12" (perdita)
+            totalWin -= 5; // Scommessa su "2nd 12" (perdita)
+            totalWin -= 0.50; // Scommessa su 25-28 e "3rd 12" (perdita)
+            totalWin -= 0.50; // Scommessa su 31-34 e "3rd 12" (perdita)
         } else if (contains(FIRST_12, number)) {
             // Vincita su "1st 12" (payout 3:1)
             totalWin += 5 * 3; // 15€
