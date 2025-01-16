@@ -1,7 +1,5 @@
 package it.campione.roulette;
 
-import java.util.Random;
-
 import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -48,11 +46,11 @@ import javafx.util.Duration;
  */
 public class RouletteGameApp extends Application {
 
+    Roulette roulette;
     private WebView outputWebView;
     private TextArea statsTextArea;
     private ComboBox<Integer> numberOfSpinsComboBox;
     private ComboBox<Integer> sufficientCapitalComboBox;
-    private Random random;
 
     // Numeri per le scommesse specifiche
     private static final int[] THIRD_12 = { 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36 };
@@ -71,7 +69,7 @@ public class RouletteGameApp extends Application {
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Roulette Game - Castello Strategy");
 
-        random = new Random();
+        roulette = new Roulette();
 
         // WebView per l'output (supporta HTML)
         outputWebView = new WebView();
@@ -194,7 +192,7 @@ public class RouletteGameApp extends Application {
         String lastColor = "";
 
         for (int i = 0; i < numberOfSpins; i++) {
-            int number = spinRoulette();
+            int number = roulette.spin();
             double result = 0;
             String strategy = "";
 
@@ -275,10 +273,6 @@ public class RouletteGameApp extends Application {
         removeNeonEffect(statsTextArea);
     }
 
-    private int spinRoulette() {
-        return random.nextInt(37);
-    }
-
     private double calculateBetResult(int number) {
         double totalWin = 0;
 
@@ -315,7 +309,7 @@ public class RouletteGameApp extends Application {
             totalWin -= 5; // Scommessa su "2nd 12"
         }
 
-        return totalWin; // Ritorna il guadagno netto senza arrotondamenti
+        return totalWin; // Restituisce il guadagno netto senza arrotondamenti
     }
 
     private String getSymbol(double result) {
