@@ -52,18 +52,18 @@ public class RouletteGameApp extends Application {
     private ComboBox<Integer> numberOfSpinsComboBox;
     private ComboBox<Integer> sufficientCapitalComboBox;
 
-    // Numeri per le scommesse specifiche
+    // Numbers for specific bets
     private static final int[] THIRD_12 = { 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36 };
     private static final int[] FIRST_12 = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
     private static final int[] SECOND_12 = { 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24 };
 
-    // Numeri rossi e neri nella roulette
+    // Red and black numbers in roulette
     private static final int[] RED_NUMBERS = { 1, 3, 5, 7, 9, 12, 14, 16, 18, 19, 21, 23, 25, 27, 30, 32, 34, 36 };
     private static final int[] BLACK_NUMBERS = { 2, 4, 6, 8, 10, 11, 13, 15, 17, 20, 22, 24, 26, 28, 29, 31, 33, 35 };
 
-    // Variabili di stato
-    private int lastLossNumber = -1; // Memorizza l'ultimo numero che ha causato una perdita
-    private boolean isBackupStrategyActive = false; // Indica se la strategia di backup è attiva
+    // State variables
+    private int lastLossNumber = -1; // Stores the last number that caused a leak
+    private boolean isBackupStrategyActive = false; // Indicates whether the backup strategy is active
 
     @Override
     public void start(Stage primaryStage) {
@@ -71,30 +71,30 @@ public class RouletteGameApp extends Application {
 
         roulette = new Roulette();
 
-        // WebView per l'output (supporta HTML)
+        // WebView for output (supports HTML)
         outputWebView = new WebView();
 
-        // TextArea per le statistiche
+        // TextArea for statistics
         statsTextArea = new TextArea();
         statsTextArea.setEditable(false);
         statsTextArea.setWrapText(true);
 
-        // Applica le animazioni all'avvio
+        // Apply animations on startup
         applyStartupAnimations(statsTextArea);
 
-        // ComboBox per il numero di lanci
+        // ComboBox for the number of launches
         numberOfSpinsComboBox = new ComboBox<>();
         for (int i = 1; i <= 5500; i++) {
             numberOfSpinsComboBox.getItems().add(i);
         }
-        numberOfSpinsComboBox.getSelectionModel().select(99); // Imposta 100 come valore predefinito
+        numberOfSpinsComboBox.getSelectionModel().select(99); // Set 100 as the default value
 
-        // ComboBox per il capitale minimo di vittoria
+        // ComboBox for the minimum win capital
         sufficientCapitalComboBox = new ComboBox<>();
         sufficientCapitalComboBox.getItems().addAll(0, 25, 50, 60, 75, 90, 100, 150, 200);
-        sufficientCapitalComboBox.getSelectionModel().selectFirst(); // Imposta 0 come valore predefinito
+        sufficientCapitalComboBox.getSelectionModel().selectFirst(); // Set 0 as the default value
 
-        // Pulsante per avviare la simulazione
+        // Button to start simulation
         Button startButton = new Button("Avvia Simulazione");
         startButton.getStyleClass().add("button");
         startButton.setOnAction(e -> startSimulation());
@@ -105,7 +105,7 @@ public class RouletteGameApp extends Application {
                 new Label("Capitale minimo di vittoria:"), sufficientCapitalComboBox, startButton);
         controlsBox.setPadding(new Insets(10));
 
-        // Applica l'animazione alle ComboBox
+        // Apply animation to ComboBoxes
         applyComboBoxAnimation(numberOfSpinsComboBox);
         applyComboBoxAnimation(sufficientCapitalComboBox);
 
@@ -118,7 +118,7 @@ public class RouletteGameApp extends Application {
         scene.getStylesheets().add(getClass().getResource("styles.css").toExternalForm());
         primaryStage.setScene(scene);
 
-        // Gestione dell'evento di chiusura
+        // Closing event management
         primaryStage.setOnCloseRequest(event -> {
             event.consume();
             applyExitAnimations(primaryStage);
@@ -185,10 +185,10 @@ public class RouletteGameApp extends Application {
         output.append(
                 "<html><head><meta charset='UTF-8'></head><body style='font-family: Courier New; font-size: 12px;'>");
 
-        // Variabile per tenere traccia della strategia attuale
+        // Variable to keep track of the current strategy
         String currentStrategy = "Castello";
 
-        // Variabile per memorizzare il colore del numero estratto nel turno precedente
+        // Variable to store the color of the number drawn in the previous round
         String lastColor = "";
 
         for (int i = 0; i < numberOfSpins; i++) {
@@ -207,21 +207,21 @@ public class RouletteGameApp extends Application {
                 break;
 
             case "Colore opposto":
-                // Scommetti sul colore opposto a lastColor
+                // Bet on the opposite color to lastColor
                 String targetColor = lastColor.equals("Rosso") ? "Nero" : "Rosso";
                 boolean isWin = getColor(number).equals(targetColor);
 
                 if (isWin) {
-                    result = 17; // Vincita netta: 8.50€ * 2 = 17€
+                    result = 17; // Net Payout: €8.50 * 2 = €17
                 } else {
-                    result = -8.50; // Perdita: -8.50€
+                    result = -8.50; // Loss: -8.50€
                 }
 
                 strategy = "(Colore opposto)";
                 if (result < 0) {
-                    currentStrategy = "Castello"; // Ritorna a (Castello) se perde
+                    currentStrategy = "Castello"; // Return to (Castle) if he loses
                 } else {
-                    currentStrategy = "Castello"; // Ritorna a (Castello) se vince
+                    currentStrategy = "Castello"; // Return to (Castle) if he wins
                 }
                 break;
             }
@@ -277,46 +277,46 @@ public class RouletteGameApp extends Application {
         double totalWin = 0;
 
         if (number == 0) {
-            // Vincita su 0 (payout 35:1)
+            // Win on 0 (payout 35:1)
             totalWin += 0.50 * 35; // 17.50€
-            // Sottrai le perdite delle altre scommesse
-            totalWin -= 5; // Scommessa su "1st 12" (perdita)
-            totalWin -= 5; // Scommessa su "2nd 12" (perdita)
-            totalWin -= 0.50; // Scommessa su 25-28 e "3rd 12" (perdita)
-            totalWin -= 0.50; // Scommessa su 31-34 e "3rd 12" (perdita)
+            // Subtract losses from other bets
+            totalWin -= 5; // Bet on "1st 12" (Loss)
+            totalWin -= 5; // Bet on "2nd 12" (Loss)
+            totalWin -= 0.50; // Bet on 25-28 and "3rd 12" (loss)
+            totalWin -= 0.50; // Bet on 31-34 and "3rd 12" (loss)
         } else if (contains(FIRST_12, number)) {
-            // Vincita su "1st 12" (payout 3:1)
+            // Win on "1st 12" (payout 3:1)
             totalWin += 5 * 3; // 15€
-            // Sottrai solo le scommesse perdenti
-            totalWin -= 0.50; // Scommessa su 0
-            totalWin -= 0.50; // Scommessa su 25-28 e "3rd 12"
-            totalWin -= 0.50; // Scommessa su 31-34 e "3rd 12"
-            totalWin -= 5; // Scommessa su "2nd 12" (perdita)
+            // Subtract only losing bets
+            totalWin -= 0.50; // Bet on 0
+            totalWin -= 0.50; // Bet on 25-28 and "3rd 12"
+            totalWin -= 0.50; // Bet on 31-34 and "3rd 12"
+            totalWin -= 5; // Bet on "2nd 12" (Loss)
         } else if (contains(SECOND_12, number)) {
-            // Vincita su "2nd 12" (payout 3:1)
+            // Win on "2nd 12" (payout 3:1)
             totalWin += 5 * 3; // 15€
-            // Sottrai solo le scommesse perdenti
-            totalWin -= 0.50; // Scommessa su 0
-            totalWin -= 0.50; // Scommessa su 25-28 e "3rd 12"
-            totalWin -= 0.50; // Scommessa su 31-34 e "3rd 12"
-            totalWin -= 5; // Scommessa su "1st 12" (perdita)
+            // Subtract only losing bets
+            totalWin -= 0.50; // Bet on 0
+            totalWin -= 0.50; // Bet on 25-28 and "3rd 12"
+            totalWin -= 0.50; // Bet on 31-34 and "3rd 12"
+            totalWin -= 5; // Bet on "1st 12" (Loss)
         } else if (contains(THIRD_12, number)) {
-            // Vincita su "3rd 12" (payout 2:1)
+            // Win on "3rd 12" (payout 2:1)
             totalWin += 0.50 * 2; // 1€
-            // Sottrai tutte le altre scommesse
-            totalWin -= 0.50; // Scommessa su 0
-            totalWin -= 5; // Scommessa su "1st 12"
-            totalWin -= 5; // Scommessa su "2nd 12"
+            // Subtract all other bets
+            totalWin -= 0.50; // Bet on 0
+            totalWin -= 5; // Bet on "1st 12"
+            totalWin -= 5; // Bet on "2nd 12"
         }
 
-        return totalWin; // Restituisce il guadagno netto senza arrotondamenti
+        return totalWin; // Returns net gain without rounding
     }
 
     private String getSymbol(double result) {
         if (result > 0) {
-            return "."; // Vittoria
+            return "."; // Victory
         } else {
-            return "X"; // Sconfitta
+            return "X"; // Defeat
         }
     }
 

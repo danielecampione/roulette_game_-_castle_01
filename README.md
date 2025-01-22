@@ -33,3 +33,7 @@ For a more detailed explanation, you can watch the following video:
 ---
 
 Feel free to explore and adapt these strategies for your own use. Good luck!
+
+---
+
+![Png](https://i.ibb.co/Km58zr9/castle.png)
