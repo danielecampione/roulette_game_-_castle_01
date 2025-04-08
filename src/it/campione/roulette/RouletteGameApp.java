@@ -273,43 +273,47 @@ public class RouletteGameApp extends Application {
         removeNeonEffect(statsTextArea);
     }
 
+    /** Second winning quadrant, third winning quadrant, correct multipliers.
+     */
     private double calculateBetResult(int number) {
         double totalWin = 0;
 
         if (number == 0) {
-            // Win on 0 (payout 35:1)
-            totalWin += 0.50 * 35; // 17.50€
-            // Subtract losses from other bets
-            totalWin -= 5; // Bet on "1st 12" (Loss)
-            totalWin -= 5; // Bet on "2nd 12" (Loss)
-            totalWin -= 0.50; // Bet on 25-28 and "3rd 12" (loss)
-            totalWin -= 0.50; // Bet on 31-34 and "3rd 12" (loss)
+            // Bet on 0: wager of EUR0.50 at odds of 35:1 = +EUR17.50
+            // Losses: EUR1 for the bet on horses (Quadrant 1) + EUR5 (Quadrant 2) + EUR5 (Quadrant 3 winning)
+            totalWin += 0.50 * 35; // +EUR17.50
+            totalWin -= 1; // loss on the bet for Quadrant 1 (horses)
+            totalWin -= 5; // loss on the bet for Quadrant 2
+            totalWin -= 5; // loss on the bet for Quadrant 3 (winning otherwise)
         } else if (contains(FIRST_12, number)) {
-            // Win on "1st 12" (payout 3:1)
-            totalWin += 5 * 3; // 15€
-            // Subtract only losing bets
-            totalWin -= 0.50; // Bet on 0
-            totalWin -= 0.50; // Bet on 25-28 and "3rd 12"
-            totalWin -= 0.50; // Bet on 31-34 and "3rd 12"
-            totalWin -= 5; // Bet on "2nd 12" (Loss)
+            // If the number falls in Quadrant 1 ("1st12"):
+            // Represents the bet on horses:
+            // Total wager: EUR1 at odds of 2:1 = +EUR2
+            // Losses: EUR0.50 (bet on 0) + EUR5 (Quadrant 2) + EUR5 (Quadrant 3)
+            totalWin += 1 * 2; // +EUR2
+            totalWin -= 0.50; // bet on 0 lost
+            totalWin -= 5; // bet on Quadrant 2 lost
+            totalWin -= 5; // bet on Quadrant 3 lost
         } else if (contains(SECOND_12, number)) {
-            // Win on "2nd 12" (payout 3:1)
-            totalWin += 5 * 3; // 15€
-            // Subtract only losing bets
-            totalWin -= 0.50; // Bet on 0
-            totalWin -= 0.50; // Bet on 25-28 and "3rd 12"
-            totalWin -= 0.50; // Bet on 31-34 and "3rd 12"
-            totalWin -= 5; // Bet on "1st 12" (Loss)
+            // If the number falls in Quadrant 2 ("2nd12"):
+            // Wager: EUR5 at odds of 2:1 = +EUR10
+            // Losses: EUR0.50 (bet on 0) + EUR1 (horses in Quadrant 1) + EUR5 (Quadrant 3)
+            totalWin += 5 * 2; // +EUR10
+            totalWin -= 0.50; // bet on 0 lost
+            totalWin -= 1; // bet on horses (Quadrant 1) lost
+            totalWin -= 5; // bet on Quadrant 3 lost
         } else if (contains(THIRD_12, number)) {
-            // Win on "3rd 12" (payout 2:1)
-            totalWin += 0.50 * 2; // 1€
-            // Subtract all other bets
-            totalWin -= 0.50; // Bet on 0
-            totalWin -= 5; // Bet on "1st 12"
-            totalWin -= 5; // Bet on "2nd 12"
+            // If the number falls in Quadrant 3 ("3rd12"):
+            // This is a winning quadrant:
+            // Wager: EUR5 at odds of 2:1 = +EUR10
+            // Losses: EUR0.50 (bet on 0) + EUR1 (horses in Quadrant 1) + EUR5 (Quadrant 2)
+            totalWin += 5 * 2; // +EUR10
+            totalWin -= 0.50; // bet on 0 lost
+            totalWin -= 1; // bet on horses (Quadrant 1) lost
+            totalWin -= 5; // bet on Quadrant 2 lost
         }
 
-        return totalWin; // Returns net gain without rounding
+        return totalWin;
     }
 
     private String getSymbol(double result) {
