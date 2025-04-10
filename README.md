@@ -36,4 +36,9 @@ Feel free to explore and adapt these strategies for your own use. Good luck!
 
 ---
 
-![Png](https://i.ibb.co/Km58zr9/castle.png)
+![Png](https://i.ibb.co/q3ZpSYDj/Immagine-2025-04-10-222432.png)
+
+## Customizations
+
+The horses are placed in the first dozen, rather than the third.
+For each defeat, the method of the opposite color is applied only once so as not to complicate things further. Then it's back to the custom castle method with the horses placed on the first dozen.
